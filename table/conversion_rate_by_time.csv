@@ -1,0 +1,13 @@
+﻿metric,value,users,converted_users,conversion_rate
+total_study_minutes,0-1,1508,221,0.14655172413793102
+total_study_minutes,1-5,803,143,0.1780821917808219
+total_study_minutes,5-10,2287,515,0.22518583296895497
+total_study_minutes,10-20,4293,1261,0.29373398555788494
+total_study_minutes,20-30,2847,895,0.31436599929750614
+total_study_minutes,30-60,2222,855,0.3847884788478848
+total_study_minutes,60-120,90,30,0.3333333333333333
+avg_session_minutes,0-1,1508,221,0.14655172413793102
+avg_session_minutes,1-5,1797,372,0.20701168614357263
+avg_session_minutes,5-10,9066,2772,0.3057577763070814
+avg_session_minutes,10-20,1677,554,0.3303518187239117
+avg_session_minutes,20-30,2,1,0.5

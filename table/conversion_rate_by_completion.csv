@@ -1,0 +1,13 @@
+﻿metric,value,users,converted_users,conversion_rate
+done_checkout_started,0.0,11633,3069,0.26381844751998623
+done_checkout_started,1.0,2417,851,0.3520893669838643
+done_lesson_completed,0.0,3816,604,0.15828092243186584
+done_lesson_completed,1.0,10234,3316,0.32401797928473713
+done_onboarding_completed,0.0,5695,1422,0.24969271290605793
+done_onboarding_completed,1.0,8355,2498,0.298982645122681
+done_plan_selected,0.0,9443,2377,0.2517208514243355
+done_plan_selected,1.0,4607,1543,0.3349251139570219
+done_quiz_submitted,0.0,11645,2911,0.24997853155860886
+done_quiz_submitted,1.0,2405,1009,0.41954261954261957
+done_subscribe,0.0,14046,3916,0.2787982343727752
+done_subscribe,1.0,4,4,1.0

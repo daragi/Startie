@@ -1,0 +1,218 @@
+Project startie {
+  database_type: "PostgreSQL"
+  Note: "Startie product analytics ERD (12 tables, 2025-01 to 2025-05)"
+}
+
+Table users {
+  user_id varchar [pk, note: "U-00001 format"]
+  signup_date date
+  acquisition_source varchar [note: "organic, google_ads, meta_ads, youtube, instagram_influencer, referral, content_marketing"]
+  device_type varchar [note: "web, ios, android"]
+  campaign_id varchar [null]
+  signup_method varchar [note: "email, google, kakao, naver"]
+  gender varchar [note: "male, female, other"]
+  age_group varchar [note: "20-24, 25-29, 30-34, 35-39, 40+"]
+  job_category varchar
+  state varchar [note: "trialing, active, free_active, churned, resurrected"]
+  current_plan varchar [null, note: "monthly_basic, monthly_pro, annual_basic, annual_pro"]
+  plan_start_date date [null]
+  is_activated boolean
+  activation_date date [null]
+  churn_date date [null]
+  cancel_reason varchar [null, note: "too_expensive, not_using, technical_issue, etc."]
+  total_sessions int
+  total_lessons_completed int
+  last_active_date date
+}
+
+Table event_logs {
+  user_id varchar
+  session_id varchar
+  event_name varchar
+  event_timestamp timestamp
+  device_type varchar [note: "web, ios, android"]
+  location varchar
+  event_sequence int
+  page_name varchar [null]
+  course_id varchar [null]
+  lesson_id varchar [null]
+  event_properties text [note: "JSON string payload"]
+
+  indexes {
+    (user_id)
+    (session_id)
+    (event_name)
+    (event_timestamp)
+    (course_id)
+    (lesson_id)
+  }
+}
+
+Table payment_transactions {
+  transaction_id varchar [pk]
+  user_id varchar
+  transaction_date timestamp
+  plan_name varchar [note: "monthly_basic, monthly_pro, annual_basic, annual_pro"]
+  amount int [note: "KRW"]
+  currency varchar [note: "KRW"]
+  payment_method varchar [note: "card"]
+  status varchar [note: "completed, failed"]
+  failure_reason varchar [null]
+  retry_count int
+
+  indexes {
+    (user_id)
+    (transaction_date)
+    (status)
+  }
+}
+
+Table plan_history {
+  user_id varchar
+  plan_name varchar [note: "monthly_basic, monthly_pro, annual_basic, annual_pro"]
+  action varchar [note: "subscribe, renew, upgrade, cancel"]
+  action_date date
+  previous_plan varchar [null]
+  cancel_reason varchar [null]
+
+  indexes {
+    (user_id)
+    (action)
+    (action_date)
+  }
+}
+
+Table courses {
+  course_id varchar [pk, note: "CRS-001 ~ CRS-020"]
+  title varchar
+  category varchar [note: "programming, data, business, design, ai"]
+  difficulty varchar [note: "beginner, intermediate, advanced"]
+  price_type varchar [note: "free, premium"]
+  instructor_id varchar
+  total_lessons int
+  total_duration int [note: "minutes"]
+  launched_at date
+  rating_avg float
+}
+
+Table lessons {
+  lesson_id varchar [pk]
+  course_id varchar
+  lesson_order int
+  title varchar
+  duration_min int
+  has_quiz boolean
+
+  indexes {
+    (course_id)
+  }
+}
+
+Table experiments {
+  experiment_id varchar [pk]
+  experiment_name varchar
+  hypothesis text
+  primary_metric varchar
+  variants text [note: "JSON"]
+  traffic_pct float
+  start_date date
+  end_date date
+  target_segment varchar
+  status varchar [note: "running, completed"]
+}
+
+Table ab_assignment {
+  user_id varchar
+  experiment_id varchar
+  variant varchar [note: "control, treatment"]
+  assigned_date date
+
+  indexes {
+    (user_id)
+    (experiment_id)
+    (assigned_date)
+  }
+}
+
+Table campaigns {
+  campaign_id varchar [pk]
+  name varchar
+  channel varchar [note: "google_ads, meta_ads, youtube, instagram_influencer, content_marketing, referral"]
+  start_date date
+  end_date date
+  daily_budget int [note: "KRW"]
+  status varchar
+}
+
+Table referral_events {
+  referral_id varchar [pk]
+  referrer_user_id varchar
+  referred_user_id varchar
+  referral_date date
+  referral_channel varchar [note: "link, kakao, email"]
+  status varchar [note: "sent, clicked, converted"]
+
+  indexes {
+    (referrer_user_id)
+    (referred_user_id)
+    (referral_date)
+  }
+}
+
+Table chat_events {
+  chat_id varchar [pk]
+  user_id varchar
+  chat_date date
+  category varchar [note: "billing, technical, content, account, other"]
+  message text
+  status varchar [note: "resolved, pending"]
+  first_response_min float
+  resolution_min float
+  satisfaction_score int [note: "1~5"]
+
+  indexes {
+    (user_id)
+    (chat_date)
+    (category)
+  }
+}
+
+Table push_events {
+  push_id varchar [pk]
+  user_id varchar
+  campaign_id varchar [null]
+  sent_at timestamp
+  push_type varchar [note: "lesson_reminder, promotion, re_engagement, system"]
+  title varchar
+  opened boolean
+  opened_at timestamp [null]
+
+  indexes {
+    (user_id)
+    (campaign_id)
+    (sent_at)
+    (opened)
+  }
+}
+
+Ref: users.campaign_id > campaigns.campaign_id
+
+Ref: event_logs.user_id > users.user_id
+Ref: event_logs.course_id > courses.course_id
+Ref: event_logs.lesson_id > lessons.lesson_id
+
+Ref: payment_transactions.user_id > users.user_id
+Ref: plan_history.user_id > users.user_id
+
+Ref: lessons.course_id > courses.course_id
+
+Ref: ab_assignment.user_id > users.user_id
+Ref: ab_assignment.experiment_id > experiments.experiment_id
+
+Ref: push_events.user_id > users.user_id
+Ref: push_events.campaign_id > campaigns.campaign_id
+
+Ref: chat_events.user_id > users.user_id
+
+Ref: referral_events.referrer_user_id > users.user_id
+Ref: referral_events.referred_user_id > users.user_id
